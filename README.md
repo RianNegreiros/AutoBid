@@ -1,12 +1,12 @@
-# E-commerce API Rest
+# E-commerce
 
-## E-commerce API Rest demo application
+## E-commerce demo application
 
 ## Deploy on [Render](https://net-core-e-commerce-api-rest.onrender.com/swagger/index.html)
 
 ### Preview
 
-![Application image preview](/Documentation/Preview.png)
+![Application image preview](/client/src/assets/documentation/Preview.png)
 
 ### Methodologies
 
