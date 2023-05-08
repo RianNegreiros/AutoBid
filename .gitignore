@@ -461,3 +461,5 @@ redis-data
 postgres-data
 
 appsettings.json
+
+.tool-versions
