@@ -34,6 +34,6 @@
 
 - [Docker Compose](https://docs.docker.com/compose/)
 
-1.Config appsettings.json
+  1. Config appsettings.json
 
-2.Run docker-compose.yml
+  2. Run docker-compose.yml
