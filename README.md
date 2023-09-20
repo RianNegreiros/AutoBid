@@ -2,8 +2,6 @@
 
 ## E-commerce Rest API demo application
 
-## Deploy on [Render](https://net-core-e-commerce-api-rest.onrender.com/swagger/index.html)
-
 ### Methodologies
 
 - Clean Architecture
