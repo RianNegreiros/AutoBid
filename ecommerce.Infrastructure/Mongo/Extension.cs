@@ -21,5 +21,7 @@ public static class Extension
       var mongoClient = client.GetService<IMongoClient>();
       return mongoClient.GetDatabase(mongoConfig.Database);
     });
+
+    services.AddSingleton<IDatabaseInitializer, MongoInitializer>();
   }
 }

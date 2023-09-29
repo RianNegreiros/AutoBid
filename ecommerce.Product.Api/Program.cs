@@ -28,6 +28,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+var databaseInitializer = app.Services.GetService<IDatabaseInitializer>();
+await databaseInitializer.InitializeAsync();
+
 app.MapControllers();
 
 app.Run();
