@@ -5,6 +5,6 @@ namespace ecommerce.Product.Api.Services;
 
 public interface IProductService
 {
-  Task<ProductCreated> GetProduct(Guid ProductId);
+  Task<ProductCreated> GetProduct(string ProductId);
   Task<ProductCreated> AddProduct(CreateProduct product);
 }

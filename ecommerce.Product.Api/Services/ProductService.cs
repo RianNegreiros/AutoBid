@@ -1,17 +1,25 @@
 using ecommerce.Infrastructure.Command.Product;
 using ecommerce.Infrastructure.Event.Product;
+using ecommerce.Product.Api.Repositories;
 
 namespace ecommerce.Product.Api.Services;
 
 public class ProductService : IProductService
 {
-  public Task<ProductCreated> AddProduct(CreateProduct product)
+  private readonly IProductRepository _productRepository;
+
+  public ProductService(IProductRepository productRepository)
   {
-    throw new NotImplementedException();
+    _productRepository = productRepository;
+  }
+  
+  public async Task<ProductCreated> AddProduct(CreateProduct product)
+  {
+    return await _productRepository.AddProduct(product);
   }
 
-  public Task<ProductCreated> GetProduct(Guid ProductId)
+  public async Task<ProductCreated> GetProduct(string ProductId)
   {
-    throw new NotImplementedException();
+    return await _productRepository.GetProduct(ProductId);
   }
 }

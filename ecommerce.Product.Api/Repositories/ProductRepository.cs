@@ -18,10 +18,10 @@ public class ProductRepository : IProductRepository
   public async Task<ProductCreated> AddProduct(CreateProduct product)
   {
     await _collection.InsertOneAsync(product);
-    return new ProductCreated { ProductId = product.ProductId, CreatedAt = DateTime.UtcNow };
+    return new ProductCreated { ProductId = product.ProductId, ProductName = product.ProductName, CreatedAt = DateTime.UtcNow };
   }
 
-  public async Task<ProductCreated> GetProduct(Guid ProductId)
+  public async Task<ProductCreated> GetProduct(string ProductId)
   {
     var product = _collection.AsQueryable().Where(x => x.ProductId == ProductId).FirstOrDefault() ?? throw new Exception("Product not found");
 
