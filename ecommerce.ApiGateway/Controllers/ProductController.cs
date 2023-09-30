@@ -1,4 +1,5 @@
 using ecommerce.Infrastructure.Command.Product;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ecommerce.ApiGateway.Controllers;
@@ -7,6 +8,12 @@ namespace ecommerce.ApiGateway.Controllers;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
+  private readonly IBusControl _bus;
+  public ProductController(IBusControl bus)
+  {
+    _bus = bus;
+  }
+
   [HttpGet]
   public async Task<IActionResult> Get()
   {
@@ -17,7 +24,9 @@ public class ProductController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> Add([FromForm] CreateProduct command)
   {
-    await Task.CompletedTask;
-    return Accepted("Product created");
+    var uri = new Uri("rabbitmq://localhost/create-product");
+    var endPoint = await _bus.GetSendEndpoint(uri);
+    await endPoint.Send(command);
+    return Ok();
   }
 }
