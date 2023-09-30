@@ -1,6 +1,9 @@
 using ecommerce.Infrastructure.Mongo;
+using ecommerce.Product.Api.Handlers;
 using ecommerce.Product.Api.Repositories;
 using ecommerce.Product.Api.Services;
+using MassTransit;
+using ecommerce.Infrastructure.EventBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,30 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMongoDB(builder.Configuration);
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<CreateProductHandler>();
+
+var rabbitMqOptions = new RabbitMqOption();
+builder.Configuration.GetSection("rabbitmq").Bind(rabbitMqOptions);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateProductHandler>();
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(new Uri(rabbitMqOptions.ConnectionString), h =>
+        {
+            h.Username(rabbitMqOptions.UserName);
+            h.Password(rabbitMqOptions.Password);
+        });
+
+        cfg.ReceiveEndpoint("create-product", e =>
+        {
+            e.PrefetchCount = 16;
+            e.UseMessageRetry(r => r.Interval(2, 100));
+            e.ConfigureConsumer<CreateProductHandler>(context);
+        });
+    });
+});
 
 var app = builder.Build();
 
@@ -28,9 +55,13 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-var databaseInitializer = app.Services.GetService<IDatabaseInitializer>();
-await databaseInitializer.InitializeAsync();
-
 app.MapControllers();
+
+var bus = app.Services.GetService<IBusControl>();
+bus.Start();
+
+var databaseInitializer = app.Services.GetService<IDatabaseInitializer>();
+if (databaseInitializer != null)
+    await databaseInitializer.InitializeAsync();
 
 app.Run();
