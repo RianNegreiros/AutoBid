@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - /var/lib/postgresql/data
 
   mongo:
     image: mongo:latest
@@ -18,8 +18,10 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin
     volumes:
-      - ./mongo-data:/data/db
+      - /var/lib/mongodb/data
 
-volumes:
-  postgres-data:
-  mongo-data:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - '5672:5672'
+      - '15672:15672'
