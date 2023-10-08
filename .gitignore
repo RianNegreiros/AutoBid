@@ -456,3 +456,6 @@ $RECYCLE.BIN/
 # SQLite files
 *.db
 *.db-*
+
+# Docker volume files
+postgres-data
