@@ -53,11 +53,11 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper, IPubli
 
         _context.Auctions.Add(auction);
 
-        var result = await _context.SaveChangesAsync() > 0;
-
         var newAuction = _mapper.Map<AuctionDto>(auction);
 
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
+
+        var result = await _context.SaveChangesAsync() > 0;
 
         return !result
             ? (ActionResult<AuctionDto>)BadRequest("Could not save changes to the database")
@@ -80,7 +80,7 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper, IPubli
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        return result ? Ok() : BadRequest("Probleam saving changes");
+        return result ? Ok() : BadRequest("Problem saving changes");
     }
 
     [HttpDelete("{id}")]
