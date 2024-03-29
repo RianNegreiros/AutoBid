@@ -5,15 +5,15 @@ namespace SearchService.Services;
 
 public class AuctionSvcHttpClient(HttpClient httpClient, IConfiguration config)
 {
-  private readonly HttpClient _httpClient = httpClient;
-  private readonly IConfiguration _config = config;
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly IConfiguration _config = config;
 
-  public async Task<List<Item>> GetItemsForSearchDatabaseSeed()
-  {
-    var lastUpdated = await DB.Find<Item, string>()
-    .Sort(x => x.Descending(x => x.UpdatedAt))
-    .ExecuteFirstAsync();
+    public async Task<List<Item>> GetItemsForSearchDatabaseSeed()
+    {
+        var lastUpdated = await DB.Find<Item, string>()
+        .Sort(x => x.Descending(x => x.UpdatedAt))
+        .ExecuteFirstAsync();
 
-    return await _httpClient.GetFromJsonAsync<List<Item>>(_config["AuctionServiceUrl"] + "/api/auctions?date=" + lastUpdated);
-  }
+        return await _httpClient.GetFromJsonAsync<List<Item>>(_config["AuctionServiceUrl"] + "/api/auctions?date=" + lastUpdated);
+    }
 }

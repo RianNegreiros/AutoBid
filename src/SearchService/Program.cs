@@ -19,14 +19,14 @@ app.MapControllers();
 
 app.Lifetime.ApplicationStarted.Register(async () =>
 {
-  try
-  {
-    await DbInitiliazer.InitDb(app);
-  }
-  catch (Exception e)
-  {
-    Console.WriteLine(e);
-  }
+    try
+    {
+        await DbInitiliazer.InitDb(app);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 });
 
 app.Run();

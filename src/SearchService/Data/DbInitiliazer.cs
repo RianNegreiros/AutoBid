@@ -8,28 +8,28 @@ namespace SearchService.Data;
 
 public class DbInitiliazer
 {
-  private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true }; // Cache options
+    private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true }; // Cache options
 
-  public static async Task InitDb(WebApplication app)
-  {
-    await DB.InitAsync("SearchDb", MongoClientSettings.FromConnectionString(app.Configuration.GetConnectionString("MongoDbConnection")));
+    public static async Task InitDb(WebApplication app)
+    {
+        await DB.InitAsync("SearchDb", MongoClientSettings.FromConnectionString(app.Configuration.GetConnectionString("MongoDbConnection")));
 
-    await DB.Index<Item>()
-    .Key(x => x.Make, KeyType.Text)
-    .Key(x => x.Model, KeyType.Text)
-    .Key(x => x.Color, KeyType.Text)
-    .CreateAsync();
+        await DB.Index<Item>()
+        .Key(x => x.Make, KeyType.Text)
+        .Key(x => x.Model, KeyType.Text)
+        .Key(x => x.Color, KeyType.Text)
+        .CreateAsync();
 
-    var count = await DB.CountAsync<Item>();
+        var count = await DB.CountAsync<Item>();
 
-    using var scope = app.Services.CreateScope();
+        using var scope = app.Services.CreateScope();
 
-    var httpClient = scope.ServiceProvider.GetRequiredService<AuctionSvcHttpClient>();
+        var httpClient = scope.ServiceProvider.GetRequiredService<AuctionSvcHttpClient>();
 
-    var items = await httpClient.GetItemsForSearchDatabaseSeed();
+        var items = await httpClient.GetItemsForSearchDatabaseSeed();
 
-    Console.WriteLine(items.Count + " returned from the auction service");
+        Console.WriteLine(items.Count + " returned from the auction service");
 
-    if (items.Count > 0) await DB.SaveAsync(items);
-  }
+        if (items.Count > 0) await DB.SaveAsync(items);
+    }
 }
