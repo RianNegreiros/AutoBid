@@ -6,15 +6,13 @@ using SearchService.RequestHelpers;
 namespace SearchService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/search")]
 public class SearchController : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<List<Item>>> SearchItems([FromQuery] SearchParams searchParams)
     {
         var query = DB.PagedSearch<Item, Item>();
-
-        query.Sort(x => x.Ascending(a => a.Make));
 
         if (!string.IsNullOrEmpty(searchParams.SearchTerm))
         {
@@ -31,11 +29,12 @@ public class SearchController : ControllerBase
         query = searchParams.FilterBy switch
         {
             "finished" => query.Match(x => x.AuctionEnd < DateTime.UtcNow),
-            "endingSoon" => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6) && x.AuctionEnd > DateTime.UtcNow),
+            "endingSoon" => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6)
+                && x.AuctionEnd > DateTime.UtcNow),
             _ => query.Match(x => x.AuctionEnd > DateTime.UtcNow)
         };
 
-        if (!string.IsNullOrEmpty(searchParams.Winner))
+        if (!string.IsNullOrEmpty(searchParams.Seller))
         {
             query.Match(x => x.Seller == searchParams.Seller);
         }
@@ -52,7 +51,7 @@ public class SearchController : ControllerBase
 
         return Ok(new
         {
-            result = result.Results,
+            results = result.Results,
             pageCount = result.PageCount,
             totalCount = result.TotalCount
         });
