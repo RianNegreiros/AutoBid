@@ -8,10 +8,10 @@ builder.Services.AddReverseProxy()
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-      options.Authority = builder.Configuration["IdentityServiceUrl"];
-      options.RequireHttpsMetadata = false;
-      options.TokenValidationParameters.ValidateAudience = false;
-      options.TokenValidationParameters.NameClaimType = "username";
+        options.Authority = builder.Configuration["IdentityServiceUrl"];
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.NameClaimType = "username";
     });
 
 var app = builder.Build();
