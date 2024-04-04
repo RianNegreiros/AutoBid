@@ -1,3 +1,3 @@
-# Sample Auction Microservices
+# Car auction microservices
 
 ![Auction architecture](./docs/AuctionAppArch.png)
