@@ -1,9 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
-using SearchService.Models;
-using SearchService.RequestHelpers;
 
-namespace SearchService.Controllers;
+namespace SearchService;
 
 [ApiController]
 [Route("api/search")]

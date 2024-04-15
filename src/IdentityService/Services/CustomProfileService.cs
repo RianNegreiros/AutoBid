@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using IdentityModel;
@@ -7,18 +7,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService;
 
-public class CustomProfileService(UserManager<ApplicationUser> userManager) : IProfileService
+public class CustomProfileService : IProfileService
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public CustomProfileService(UserManager<ApplicationUser> userManager)
+    {
+        _userManager = userManager;
+    }
 
     public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var user = await _userManager.GetUserAsync(context.Subject);
-        var existingClaims = await _userManager.GetClaimsAsync(user);
+        var existingClaims = await _userManager.GetClaimsAsync(user);   
 
         var claims = new List<Claim>
         {
-            new("username", user.UserName)
+            new Claim("username", user.UserName)
         };
 
         context.IssuedClaims.AddRange(claims);

@@ -1,14 +1,10 @@
-using AuctionService.Data;
+﻿using AuctionService.Data;
 using AuctionService.DTOs;
 using AuctionService.Entities;
-
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-
 using Contracts;
-
 using MassTransit;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +13,19 @@ namespace AuctionService.Controllers;
 
 [ApiController]
 [Route("api/auctions")]
-public class AuctionsController(AuctionDbContext context, IMapper mapper,
-    IPublishEndpoint publishEndpoint) : ControllerBase
+public class AuctionsController : ControllerBase
 {
-    private readonly AuctionDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
-    private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
+    private readonly AuctionDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
+
+    public AuctionsController(AuctionDbContext context, IMapper mapper,
+        IPublishEndpoint publishEndpoint)
+    {
+        _context = context;
+        _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
+    }
 
     [HttpGet]
     public async Task<ActionResult<List<AuctionDto>>> GetAllAuctions(string date)
@@ -44,7 +47,9 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper,
             .Include(x => x.Item)
             .FirstOrDefaultAsync(x => x.Id == id);
 
-        return auction == null ? (ActionResult<AuctionDto>)NotFound() : (ActionResult<AuctionDto>)_mapper.Map<AuctionDto>(auction);
+        if (auction == null) return NotFound();
+
+        return _mapper.Map<AuctionDto>(auction);
     }
 
     [Authorize]
@@ -63,9 +68,9 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper,
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        return !result
-            ? (ActionResult<AuctionDto>)BadRequest("Could not save changes to the DB")
-            : (ActionResult<AuctionDto>)CreatedAtAction(nameof(GetAuctionById),
+        if (!result) return BadRequest("Could not save changes to the DB");
+
+        return CreatedAtAction(nameof(GetAuctionById),
             new { auction.Id }, newAuction);
     }
 
@@ -90,7 +95,9 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper,
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        return result ? Ok() : BadRequest("Problem saving changes");
+        if (result) return Ok();
+
+        return BadRequest("Problem saving changes");
     }
 
     [Authorize]
@@ -109,6 +116,9 @@ public class AuctionsController(AuctionDbContext context, IMapper mapper,
 
         var result = await _context.SaveChangesAsync() > 0;
 
-        return !result ? BadRequest("Could not update DB") : Ok();
+        if (!result) return BadRequest("Could not update DB");
+
+        return Ok();
     }
+
 }

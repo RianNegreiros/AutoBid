@@ -1,4 +1,5 @@
-﻿using IdentityModel;
+﻿using System.Security.Claims;
+using IdentityModel;
 using IdentityService.Data;
 using IdentityService.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,73 +13,69 @@ public class SeedData
     public static void EnsureSeedData(WebApplication app)
     {
         using var scope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
         context.Database.Migrate();
 
         var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var john = userMgr.FindByNameAsync("john").Result;
-        if (john == null)
+
+        if (userMgr.Users.Any()) return;
+
+        var alice = userMgr.FindByNameAsync("alice").Result;
+        if (alice == null)
         {
-            john = new ApplicationUser
+            alice = new ApplicationUser
             {
-                UserName = "john",
-                Email = "JohnDoe@email.com",
+                UserName = "alice",
+                Email = "AliceSmith@email.com",
                 EmailConfirmed = true,
             };
-            var result = userMgr.CreateAsync(john, "Pass123$").Result;
+            var result = userMgr.CreateAsync(alice, "Pass123$").Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
             }
 
-            result = userMgr.AddClaimsAsync(john, [
-                        new(JwtClaimTypes.Name, "John Doe"),
-                new(JwtClaimTypes.GivenName, "John"),
-                new(JwtClaimTypes.FamilyName, "Doe"),
-                new(JwtClaimTypes.WebSite, "http://john.com"),
-            ]).Result;
+            result = userMgr.AddClaimsAsync(alice, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Alice Smith"),
+                        }).Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
             }
-            Log.Debug("jhon created");
+            Log.Debug("alice created");
         }
         else
         {
-            Log.Debug("john already exists");
+            Log.Debug("alice already exists");
         }
 
-        var jane = userMgr.FindByNameAsync("jane").Result;
-        if (jane == null)
+        var bob = userMgr.FindByNameAsync("bob").Result;
+        if (bob == null)
         {
-            jane = new ApplicationUser
+            bob = new ApplicationUser
             {
-                UserName = "jane",
-                Email = "JaneDoe@email.com",
+                UserName = "bob",
+                Email = "BobSmith@email.com",
                 EmailConfirmed = true
             };
-            var result = userMgr.CreateAsync(jane, "Pass123$").Result;
+            var result = userMgr.CreateAsync(bob, "Pass123$").Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
             }
 
-            result = userMgr.AddClaimsAsync(jane, [
-                        new(JwtClaimTypes.Name, "Jane Doe"),
-                new(JwtClaimTypes.GivenName, "Jane"),
-                new(JwtClaimTypes.FamilyName, "Doe"),
-                new(JwtClaimTypes.WebSite, "http://jane.com"),
-                new("location", "somewhere")
-                    ]).Result;
+            result = userMgr.AddClaimsAsync(bob, new Claim[]{
+                            new Claim(JwtClaimTypes.Name, "Bob Smith"),
+                        }).Result;
             if (!result.Succeeded)
             {
                 throw new Exception(result.Errors.First().Description);
             }
-            Log.Debug("jane created");
+            Log.Debug("bob created");
         }
         else
         {
-            Log.Debug("jane already exists");
+            Log.Debug("bob already exists");
         }
     }
 }

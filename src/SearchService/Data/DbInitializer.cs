@@ -1,9 +1,8 @@
+﻿using System.Text.Json;
 using MongoDB.Driver;
 using MongoDB.Entities;
-using SearchService.Models;
-using SearchService.Services;
 
-namespace SearchService.Data;
+namespace SearchService;
 
 public class DbInitializer
 {
@@ -24,8 +23,8 @@ public class DbInitializer
 
         var httpClient = scope.ServiceProvider.GetRequiredService<AuctionSvcHttpClient>();
 
-        var items = await httpClient.GetItemsForSearchDatabaseSeed();
-
+        var items = await httpClient.GetItemsForSearchDb();
+        
         Console.WriteLine(items.Count + " returned from the auction service");
 
         if (items.Count > 0) await DB.SaveAsync(items);
