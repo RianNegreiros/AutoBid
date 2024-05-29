@@ -51,6 +51,7 @@ export default function Filters() {
 
   return (
     <div className='flex justify-between items-center mb-4'>
+
       <div>
         <span className='uppercase text-sm text-gray-500 mr-2'>Filter by</span>
         <Button.Group>
@@ -66,6 +67,7 @@ export default function Filters() {
           ))}
         </Button.Group>
       </div>
+
 
       <div>
         <span className='uppercase text-sm text-gray-500 mr-2'>Order by</span>
