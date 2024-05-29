@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using IdentityModel;
 using IdentityService.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +10,14 @@ namespace IdentityService.Pages.Register
 {
     [SecurityHeaders]
     [AllowAnonymous]
-    public class Index(UserManager<ApplicationUser> userManager) : PageModel
+    public class Index : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public Index(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
 
         [BindProperty]
         public RegisterViewModel Input { get; set; }
@@ -46,10 +52,10 @@ namespace IdentityService.Pages.Register
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddClaimsAsync(user,
-                    [
-                        new(JwtClaimTypes.Name, Input.FullName)
-                    ]);
+                    await _userManager.AddClaimsAsync(user, new Claim[]
+                    {
+                        new Claim(JwtClaimTypes.Name, Input.FullName)
+                    });
 
                     RegisterSuccess = true;
                 }
