@@ -19,7 +19,6 @@ export default async function Navbar() {
       ) : (
         <LoginButton />
       )}
-
     </header>
   )
 }
