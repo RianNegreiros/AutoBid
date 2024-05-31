@@ -29,7 +29,6 @@ export default function UserActions({ user }: Props) {
     if (pathname !== '/') router.push('/');
   }
 
-
   return (
     <Dropdown
       inline

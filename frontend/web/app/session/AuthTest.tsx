@@ -14,7 +14,6 @@ export default function AuthTest() {
     updateAuctionTest()
       .then(res => setResult(res))
       .finally(() => setLoading(false))
-
   }
 
   return (
