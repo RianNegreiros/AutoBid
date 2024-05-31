@@ -50,6 +50,7 @@ namespace AuctionService.Data.Migrations
                     OutboxId = table.Column<Guid>(type: "uuid", nullable: true),
                     MessageId = table.Column<Guid>(type: "uuid", nullable: false),
                     ContentType = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    MessageType = table.Column<string>(type: "text", nullable: false),
                     Body = table.Column<string>(type: "text", nullable: false),
                     ConversationId = table.Column<Guid>(type: "uuid", nullable: true),
                     CorrelationId = table.Column<Guid>(type: "uuid", nullable: true),
